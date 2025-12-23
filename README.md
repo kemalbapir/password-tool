@@ -35,4 +35,4 @@ Created by the author as part of a cybersecurity professional development activi
 
 ## Live Demo
 Access the live version of the tool here:  
-https://github.com/kemalbapir/password-tool/
+https://kemalbapir.github.io/password-tool/
