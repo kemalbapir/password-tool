@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Password Strength & Security Awareness Tool</title>
+  <style>
+    :root { --fg:#111; --muted:#555; --bg:#fff; --card:#f6f7f9; --line:#e6e8ee; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin:0; color:var(--fg); background:var(--bg); }
+    .wrap { max-width: 920px; margin: 28px auto; padding: 0 16px; }
+    h1 { font-size: 1.35rem; margin: 0 0 6px; }
+    p { margin: 6px 0; color: var(--muted); line-height: 1.45; }
+    .grid { display:grid; grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+    @media (min-width: 860px) { .grid { grid-template-columns: 1.1fr 0.9fr; } }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    label { display:block; font-weight: 600; margin-bottom: 6px; }
+    input[type="password"], input[type="text"]{
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line);
+      font-size: 1rem; outline: none;
+    }
+    .row { display:flex; gap:10px; align-items:center; margin-top: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line); background:#fff; padding: 8px 10px; border-radius: 10px;
+      cursor:pointer; font-weight:600;
+    }
+    .btn:active { transform: translateY(1px); }
+    .kpi { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .k { background:#fff; border:1px solid var(--line); border-radius: 12px; padding: 10px; }
+    .k .t { font-size: .82rem; color: var(--muted); }
+    .k .v { font-size: 1.05rem; font-weight: 700; margin-top: 4px; }
+    .bar { height: 10px; background:#fff; border:1px solid var(--line); border-radius: 999px; overflow:hidden; margin-top: 10px; }
+    .fill { height: 100%; width: 0%; transition: width .25s ease; }
+    .tag { display:inline-block; padding: 4px 8px; border-radius: 999px; font-weight:700; font-size:.85rem; background:#fff; border:1px solid var(--line); }
+    ul { margin: 8px 0 0 18px; color: var(--muted); }
+    code { background:#fff; padding: 2px 6px; border: 1px solid var(--line); border-radius: 8px; }
+    .small { font-size: .92rem; }
+    .footer { margin-top: 14px; font-size: .9rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Password Strength & Security Awareness Tool</h1>
+    <p class="small">
+      Evaluates password strength using length, character diversity, estimated entropy, and an approximate brute-force time.
+      This is an educational tool to promote secure authentication practices.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <label for="pw">Enter a password to evaluate</label>
+        <input id="pw" type="password" autocomplete="new-password" placeholder="Type a password…" />
+        <div class="row">
+          <button class="btn" id="toggle">Show</button>
+          <button class="btn" id="copy">Copy</button>
+          <span class="tag" id="rating">—</span>
+        </div>
+
+        <div class="bar" aria-label="strength bar"><div class="fill" id="fill"></div></div>
+
+        <div class="kpi" aria-label="metrics">
+          <div class="k"><div class="t">Length</div><div class="v" id="len">0</div></div>
+          <div class="k"><div class="t">Character sets</div><div class="v" id="sets">0/4</div></div>
+          <div class="k"><div class="t">Estimated entropy</div><div class="v" id="entropy">0 bits</div></div>
+          <div class="k"><div class="t">Brute-force time (approx.)</div><div class="v" id="bf">—</div></div>
+        </div>
+
+        <div class="card" style="margin-top:12px; background:#fff;">
+          <div style="font-weight:700; margin-bottom:6px;">Security recommendations</div>
+          <ul id="tips">
+            <li>Use 14+ characters (longer is better).</li>
+            <li>Mix uppercase, lowercase, numbers, and symbols.</li>
+            <li>Avoid names, birthdays, and common patterns (e.g., <code>Password123!</code>).</li>
+            <li>Prefer a passphrase: multiple random words + separators.</li>
+            <li>Enable MFA and use a password manager.</li>
+          </ul>
+        </div>
+
+        <div class="footer">
+          Notes: Results are estimates and depend on attacker hardware, attack type (online vs offline), hashing method, and rate limits.
+          For online logins, lockouts and MFA drastically change outcomes.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800; margin-bottom:6px;">What this tool teaches (CEH-aligned)</div>
+        <ul>
+          <li><b>Authentication security:</b> why length and complexity matter.</li>
+          <li><b>Password attacks:</b> brute-force and guessing resistance basics.</li>
+          <li><b>Defensive controls:</b> MFA, lockouts, and password managers.</li>
+          <li><b>Security awareness:</b> discourages weak patterns and reuse.</li>
+        </ul>
+
+        <div style="margin-top:12px; font-weight:800;">How scoring works (simple & explainable)</div>
+        <p class="small">
+          Strength score combines (1) length, (2) diversity of character sets, and (3) estimated entropy.
+          Entropy uses an approximate character pool size and <code>log2(pool^length)</code>.
+          Brute-force time assumes ~10 billion guesses/sec for a high-speed offline attack (educational estimate).
+        </p>
+
+        <div style="margin-top:12px; font-weight:800;">Suggested evidence for EC-Council submission</div>
+        <ul>
+          <li>Public URL (GitHub Pages) showing the tool running.</li>
+          <li>Short description + technology used.</li>
+          <li>Optional: add screenshots to your repo README.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const pw = document.getElementById('pw');
+  const toggle = document.getElementById('toggle');
+  const copy = document.getElementById('copy');
+
+  const lenEl = document.getElementById('len');
+  const setsEl = document.getElementById('sets');
+  const entropyEl = document.getElementById('entropy');
+  const bfEl = document.getElementById('bf');
+  const fill = document.getElementById('fill');
+  const rating = document.getElementById('rating');
+
+  const hasLower = s => /[a-z]/.test(s);
+  const hasUpper = s => /[A-Z]/.test(s);
+  const hasDigit = s => /\d/.test(s);
+  const hasSymbol = s => /[^A-Za-z0-9]/.test(s);
+
+  function poolSize(s){
+    let pool = 0;
+    if (hasLower(s)) pool += 26;
+    if (hasUpper(s)) pool += 26;
+    if (hasDigit(s)) pool += 10;
+    if (hasSymbol(s)) pool += 33; // approx printable symbols
+    return pool;
+  }
+
+  function log2(x){ return Math.log(x) / Math.log(2); }
+
+  function formatDuration(seconds){
+    if (!isFinite(seconds) || seconds <= 0) return "—";
+    const units = [
+      ["years", 365*24*3600],
+      ["days", 24*3600],
+      ["hours", 3600],
+      ["minutes", 60],
+      ["seconds", 1]
+    ];
+    for (const [name, size] of units){
+      if (seconds >= size){
+        const value = seconds / size;
+        if (value >= 1000 && name !== "seconds") {
+          return value.toExponential(2) + " " + name;
+        }
+        return value.toFixed(value < 10 ? 2 : (value < 100 ? 1 : 0)) + " " + name;
+      }
+    }
+    return seconds.toFixed(2) + " seconds";
+  }
+
+  function scorePassword(s){
+    const L = s.length;
+    const sets = [hasLower(s), hasUpper(s), hasDigit(s), hasSymbol(s)].filter(Boolean).length;
+    const pool = poolSize(s);
+
+    // Entropy estimate: log2(pool^L) = L * log2(pool)
+    const entropy = (pool > 0 && L > 0) ? (L * log2(pool)) : 0;
+
+    // Simple scoring: length up to 60 pts, sets up to 20 pts, entropy up to 20 pts
+    let score = 0;
+    score += Math.min(60, L * 4);               // 15 chars => 60
+    score += sets * 5;                          // 4 sets => 20
+    score += Math.min(20, entropy / 5);         // 100 bits => 20
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let label = "Weak";
+    if (score >= 80) label = "Strong";
+    else if (score >= 55) label = "Medium";
+
+    return { score, label, entropy: Math.round(entropy), sets, pool, length: L };
+  }
+
+  function update(){
+    const s = pw.value || "";
+    const m = scorePassword(s);
+
+    lenEl.textContent = m.length;
+    setsEl.textContent = `${m.sets}/4`;
+    entropyEl.textContent = `${m.entropy} bits`;
+
+    // Brute-force estimate (offline): guesses/sec (educational)
+    const guessesPerSecond = 1e10; // 10B/sec
+    // expected guesses ~ half the keyspace: 0.5 * pool^L
+    let seconds = Infinity;
+    if (m.pool > 0 && m.length > 0){
+      const logKeyspace = m.length * Math.log(m.pool); // ln(pool^L)
+      // seconds = 0.5 * exp(logKeyspace) / guessesPerSecond
+      // Avoid overflow: use logs
+      const logSeconds = Math.log(0.5) + logKeyspace - Math.log(guessesPerSecond);
+      seconds = Math.exp(logSeconds);
+    }
+    bfEl.textContent = formatDuration(seconds);
+
+    fill.style.width = m.score + "%";
+    // color by rating without naming colors explicitly? We'll keep it neutral via gradient-like:
+    if (m.score < 55) fill.style.background = "#e07a5f";
+    else if (m.score < 80) fill.style.background = "#f2cc8f";
+    else fill.style.background = "#81b29a";
+
+    rating.textContent = `${m.label} (${m.score}/100)`;
+
+    // Basic tips that react to weaknesses (no external data needed)
+    const tips = [];
+    if (m.length < 12) tips.push("Increase length to at least 12–14 characters.");
+    if (m.sets < 3) tips.push("Add more character variety (uppercase/lowercase/numbers/symbols).");
+    if (/password|qwerty|letmein/i.test(s)) tips.push("Avoid common passwords or keyboard patterns.");
+    if (/(.)\1\1/.test(s)) tips.push("Avoid repeated characters (e.g., 'aaa').");
+    if (/^\w+\d{1,4}[!@#\$%]?$/i.test(s)) tips.push("Avoid predictable patterns like word + numbers + symbol.");
+    tips.push("Avoid reusing passwords across sites; use a password manager.");
+    tips.push("Enable MFA wherever possible.");
+    const tipsEl = document.getElementById('tips');
+    tipsEl.innerHTML = tips.map(t => `<li>${t}</li>`).join("");
+  }
+
+  toggle.addEventListener('click', () => {
+    pw.type = (pw.type === "password") ? "text" : "password";
+    toggle.textContent = (pw.type === "password") ? "Show" : "Hide";
+  });
+
+  copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(pw.value || "");
+      copy.textContent = "Copied!";
+      setTimeout(() => copy.textContent = "Copy", 1200);
+    } catch (e){
+      copy.textContent = "Copy failed";
+      setTimeout(() => copy.textContent = "Copy", 1200);
+    }
+  });
+
+  pw.addEventListener('input', update);
+  update();
+})();
+</script>
+</body>
+</html>
